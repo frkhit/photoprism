@@ -259,3 +259,9 @@ fmt-go:
 	goimports -w pkg internal cmd
 tidy:
 	go mod tidy
+docker-development-cuda:
+	scripts/docker-build-cuda.sh development $(DOCKER_TAG)
+docker-photoprism-cuda:
+	scripts/docker-build-cuda.sh photoprism $(DOCKER_TAG)
+docker-tensorflow-cuda:
+	scripts/docker-build-cuda.sh tensorflow $(TF_VERSION)
