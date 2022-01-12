@@ -54,11 +54,11 @@ func (t *TensorFlow) File(filename string) (result Labels, err error) {
 		return nil, err
 	}
 
-	return t.Labels(imageBuffer)
+	return t.Labels(filename, imageBuffer)
 }
 
 // Labels returns matching labels for a jpeg media string.
-func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
+func (t *TensorFlow) Labels(filename string, img []byte) (result Labels, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("classify: %s (inference panic)\nstack: %s", r, debug.Stack())
@@ -99,7 +99,7 @@ func (t *TensorFlow) Labels(img []byte) (result Labels, err error) {
 	}
 
 	// Return best labels
-	result = t.bestLabels(output[0].Value().([][]float32)[0])
+	result = t.bestLabels(filename, output[0].Value().([][]float32)[0])
 
 	if len(result) > 0 {
 		log.Tracef("classify: image classified as %+v", result)
@@ -163,8 +163,9 @@ func (t *TensorFlow) loadModel() error {
 }
 
 // bestLabels returns the best 5 labels (if enough high probability labels) from the prediction of the model
-func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
+func (t *TensorFlow) bestLabels(filename string, probabilities []float32) Labels {
 	var result Labels
+	var keepProb []float32
 
 	for i, p := range probabilities {
 		if i >= len(t.labels) {
@@ -176,6 +177,7 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 		if p < 0.1 {
 			continue
 		}
+		keepProb = append(keepProb, p)
 
 		labelText := strings.ToLower(t.labels[i])
 
@@ -200,6 +202,21 @@ func (t *TensorFlow) bestLabels(probabilities []float32) Labels {
 
 	// Sort by probability
 	sort.Sort(result)
+
+	// label name list
+	var labelNames []string
+	// iterate over result and add label names to labelNames
+	for _, label := range result {
+		labelNames = append(labelNames, label.Name)
+	}
+
+	// log
+	log.Infof("[nasnet][filename %s]\n[probabilities_head10 %s]\n[prob_gte_0.1 %s]\n[label %s]\n",
+		filename,
+		strings.Trim(strings.Join(strings.Fields(fmt.Sprint(probabilities[:10])), ","), "[]"),
+		strings.Trim(strings.Join(strings.Fields(fmt.Sprint(keepProb)), ","), "[]"),
+		strings.Trim(strings.Join(strings.Fields(fmt.Sprint(labelNames)), ","), "[]"),
+	)
 
 	// Return the best labels only.
 	if l := len(result); l < 5 {

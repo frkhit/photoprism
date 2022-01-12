@@ -87,7 +87,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 		if imageBuffer, err := os.ReadFile(examplesPath + "/chameleon_lime.jpg"); err != nil {
 			t.Error(err)
 		} else {
-			result, err := tensorFlow.Labels(imageBuffer)
+			result, err := tensorFlow.Labels("", imageBuffer)
 
 			t.Log(result)
 
@@ -111,7 +111,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 		if imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
 			t.Error(err)
 		} else {
-			result, err := tensorFlow.Labels(imageBuffer)
+			result, err := tensorFlow.Labels("", imageBuffer)
 
 			t.Log(result)
 
@@ -135,7 +135,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 		if imageBuffer, err := os.ReadFile(examplesPath + "/Random.docx"); err != nil {
 			t.Error(err)
 		} else {
-			result, err := tensorFlow.Labels(imageBuffer)
+			result, err := tensorFlow.Labels("", imageBuffer)
 			assert.Empty(t, result)
 			assert.Error(t, err)
 		}
@@ -146,7 +146,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 		if imageBuffer, err := os.ReadFile(examplesPath + "/6720px_white.jpg"); err != nil {
 			t.Error(err)
 		} else {
-			result, err := tensorFlow.Labels(imageBuffer)
+			result, err := tensorFlow.Labels("", imageBuffer)
 
 			if err != nil {
 				t.Fatal(err)
@@ -161,7 +161,7 @@ func TestTensorFlow_Labels(t *testing.T) {
 		if imageBuffer, err := os.ReadFile(examplesPath + "/dog_orange.jpg"); err != nil {
 			t.Error(err)
 		} else {
-			result, err := tensorFlow.Labels(imageBuffer)
+			result, err := tensorFlow.Labels("", imageBuffer)
 
 			t.Log(result)
 
@@ -197,7 +197,7 @@ func TestTensorFlow_BestLabels(t *testing.T) {
 
 		p[666] = 0.5
 
-		result := tensorFlow.bestLabels(p)
+		result := tensorFlow.bestLabels("", p)
 		assert.Empty(t, result)
 	})
 	t.Run("labels loaded", func(t *testing.T) {
@@ -212,7 +212,7 @@ func TestTensorFlow_BestLabels(t *testing.T) {
 		p[8] = 0.7
 		p[1] = 0.5
 
-		result := tensorFlow.bestLabels(p)
+		result := tensorFlow.bestLabels("", p)
 		assert.Equal(t, "chicken", result[0].Name)
 		assert.Equal(t, "bird", result[0].Categories[0])
 		assert.Equal(t, "image", result[0].Source)
