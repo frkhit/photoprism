@@ -5,5 +5,5 @@ docker-start:
 .PHONY: rebuild-docker
 rebuild-docker:
 	docker build -t  photoprism_release \
-	-f docker/photoprism/Dockerfile \
+	-f Dockerfile.photoprism \
 	.
