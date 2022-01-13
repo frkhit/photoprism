@@ -76,6 +76,7 @@ func main() {
 		commands.UsersCommand,
 		commands.ConfigCommand,
 		commands.VersionCommand,
+		commands.TagCommand,
 	}
 
 	if err := app.Run(os.Args); err != nil {
